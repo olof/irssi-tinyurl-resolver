@@ -36,6 +36,15 @@ my %IRSSI = (
 
 my $debug = 1;
 
+sub wprint {
+	my $server = shift;
+	my $target = shift;
+	my $msg = join '', @_;
+
+	my $win = $server->window_item_find($target);
+	$win->print($msg, MSGLEVEL_CLIENTCRAP);
+}
+
 my @tinyfiers;
 sub add_domain {
 	my $domain = shift;
@@ -83,15 +92,9 @@ sub handler {
 		$loc =~ s/%/%%/g;
 		
 		if($loc) {
-			$server->window_item_find($target)->print(
-				"%y$url%n -> $loc", 
-				MSGLEVEL_CLIENTCRAP
-			);
+			wprint($server, $target, "%y$url%n -> $loc");
 		} elsif($debug) {
-			$server->window_item_find($target)->print(
-				"%y$url:%n invalid link", 
-				MSGLEVEL_CLIENTCRAP
-			);
+			wprint($server, $target, "%y$url:%n invalid link");
 		}
 
 		$msg =~ s/$url//;
