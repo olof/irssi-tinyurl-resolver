@@ -35,6 +35,12 @@ add_domain('gaa.st');
 add_domain('wth.se');
 add_domain('korta.nu');
 
+# 2012-01-15, 0.6:
+# * Iteratively print out each step in a tiny url chain
+#   - Introduces a depenceny on perl module Regexp::Common::URI
+#   - No longer support "www" links without scheme
+# * Major refactoring
+#   - Very easy to add new services! See above.
 # 2011-05-23, 0.51:
 # * Fixed the irssi color code bug
 # 2011-05-22, 0.5:
