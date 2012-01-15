@@ -8,6 +8,7 @@
 
 use strict;
 use LWP::UserAgent;
+use Regexp::Common qw/URI/;
 use Irssi;
 
 my $VERSION = '0.51';
@@ -20,6 +21,7 @@ my %IRSSI = (
 );
 
 my $debug = 1;
+my $color = '%y';
 
 my @tinyfiers;
 add_domain('tinyurl.com');
@@ -50,6 +52,7 @@ add_domain('korta.nu');
 
 Irssi::signal_add("message public", \&handler);
 Irssi::signal_add("message private", \&handler);
+Irssi::settings_add_int('tinyurl-resolver', 'tiny_resolve_limit', 5);
 
 sub wprint {
 	my $server = shift;
@@ -64,9 +67,13 @@ sub resolution {
 	my $server = shift;
 	my $target = shift;
 	my $tiny = shift;
-	my $dest = shift;
+	my @chain = @_;
 
-	wprint($server, $target, "%y$tiny -> $dest");
+	for (@chain) { s/%/%%/g };
+	my $msg = "$color$tiny%n";
+	$msg .= " -> $color$_%n" for (@chain);
+
+	wprint($server, $target, $msg);
 }
 
 
@@ -78,40 +85,41 @@ sub add_domain {
 	push @tinyfiers, qr/$prefix \Q$domain\E $suffix/x;
 }
 
+sub is_tiny {
+	my($url) = @_;
 
-sub hastiny {
-	my($msg) = @_;
-
-	foreach(@tinyfiers) {
-		if(my($url) = $msg =~ /($_)/i) {
-			if($url =~ /^www/i) {
-				return "http://$url";
-			}
-
-			return $url;
-		}
+	for(@tinyfiers) {
+		return 1 if $url =~ /^$_$/i;
 	}
 
 	return;
+}
+
+sub resolve {
+	my $url = shift;
+	my $lim = shift // Irssi::settings_get_int('tiny_resolve_limit');
+	my $loc = get_location($url);
+	return ($loc, '...') if $lim == 0 and is_tiny($loc);
+	return ($loc, resolve($loc, $lim-1)) if is_tiny($loc);
+	return $loc;
 }
 
 sub handler {
 	my($server, $msg, $nick, $address, $target) = @_;
 	$target = $nick unless defined $target;
 
-	while(my $url = hastiny($msg)) {
-		my $loc = get_location($url);
+	my @urls = $msg =~ /($RE{URI}{HTTP}{-scheme => 'https?'})/;
 
-		$url =~ s/%/%%/g;
-		$loc =~ s/%/%%/g;
-		
-		if($loc) {
-			resolution($server, $target, $url, $loc);
-		} elsif($debug) {
-			wprint($server, $target, "%y$url:%n invalid link");
+	for my $url (@urls) {
+		next unless is_tiny($url);
+		my @chain = resolve($url);
+
+		if(@chain == 0 and $debug) {
+			wprint($server, $target, "$color$url:%n invalid link");
+			next;
 		}
 
-		$msg =~ s/$url//;
+		resolution($server, $target, $url, @chain);
 	}
 }
 
