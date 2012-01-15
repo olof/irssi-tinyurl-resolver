@@ -72,7 +72,7 @@ sub hastiny {
 	return undef;
 }
 
-sub resolve {
+sub handler {
 	my($server, $msg, $nick, $address, $target) = @_;
 	$target=$nick if $target eq undef;
 
@@ -115,6 +115,6 @@ sub get_location {
 	return $response->header('location'); 
 }
 
-Irssi::signal_add("message public", \&resolve);
-Irssi::signal_add("message private", \&resolve);
+Irssi::signal_add("message public", \&handler);
+Irssi::signal_add("message private", \&handler);
 
