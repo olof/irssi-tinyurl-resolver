@@ -35,19 +35,26 @@ my %IRSSI = (
 # * https://github.com/olof/hacks/tree/master/irssi
 
 my $debug = 1;
-my $prefix = qr,(?:http://(?:www\.)?|www\.),;
-my @tinyfiers = (
-	qr,${prefix}tinyurl\.com/\w+,,
-	qr,${prefix}bit\.ly/\w+,,
-	qr,${prefix}cot\.ag/\w+,,
-	qr,${prefix}ow\.ly/\w+,,
-	qr,${prefix}goo\.gl/\w+,,
-	qr,${prefix}tiny\.cc/\w+,,
-	qr,${prefix}t\.co/\w+,,
-	qr,${prefix}gaa\.st/\w+,,
-	qr,${prefix}wth\.se/\w+,,
-	qr,${prefix}korta\.nu/\w+,,
-);
+
+my @tinyfiers;
+sub add_domain {
+	my $domain = shift;
+	my $suffix = shift // qr{/\w+};
+	my $prefix = shift // qr{(?:http://(?:www\.)?|www\.)};
+
+	push @tinyfiers, qr/$prefix \Q$domain\E $suffix/x;
+}
+
+add_domain('tinyurl.com');
+add_domain('bit.ly');
+add_domain('cot.ag');
+add_domain('ow.ly');
+add_domain('goo.gl');
+add_domain('tiny.cc');
+add_domain('t.co');
+add_domain('gaa.st');
+add_domain('wth.se');
+add_domain('korta.nu');
 
 sub hastiny {
 	my($msg) = @_;
