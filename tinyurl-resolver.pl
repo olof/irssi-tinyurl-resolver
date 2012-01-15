@@ -78,7 +78,16 @@ sub hastiny {
 		}
 	}
 
-	return undef;
+	return;
+}
+
+sub resolution {
+	my $server = shift;
+	my $target = shift;
+	my $tiny = shift;
+	my $dest = shift;
+
+	wprint($server, $target, "%y$tiny -> $dest");
 }
 
 sub handler {
@@ -92,7 +101,7 @@ sub handler {
 		$loc =~ s/%/%%/g;
 		
 		if($loc) {
-			wprint($server, $target, "%y$url%n -> $loc");
+			resolution($server, $target, $url, $loc);
 		} elsif($debug) {
 			wprint($server, $target, "%y$url:%n invalid link");
 		}
@@ -102,7 +111,6 @@ sub handler {
 }
 
 sub get_location {
-	my $location;
 	my ($url) = @_;
 	
 	my $ua = LWP::UserAgent->new(
