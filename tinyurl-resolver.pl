@@ -19,6 +19,20 @@ my %IRSSI = (
 	license     => 'GNU APL',
 );
 
+my $debug = 1;
+
+my @tinyfiers;
+add_domain('tinyurl.com');
+add_domain('bit.ly');
+add_domain('cot.ag');
+add_domain('ow.ly');
+add_domain('goo.gl');
+add_domain('tiny.cc');
+add_domain('t.co');
+add_domain('gaa.st');
+add_domain('wth.se');
+add_domain('korta.nu');
+
 # 2011-05-23, 0.51:
 # * Fixed the irssi color code bug
 # 2011-05-22, 0.5:
@@ -34,20 +48,36 @@ my %IRSSI = (
 # * http://www.stdlib.se/
 # * https://github.com/olof/hacks/tree/master/irssi
 
-my $debug = 1;
-my $prefix = qr,(?:http://(?:www\.)?|www\.),;
-my @tinyfiers = (
-	qr,${prefix}tinyurl\.com/\w+,,
-	qr,${prefix}bit\.ly/\w+,,
-	qr,${prefix}cot\.ag/\w+,,
-	qr,${prefix}ow\.ly/\w+,,
-	qr,${prefix}goo\.gl/\w+,,
-	qr,${prefix}tiny\.cc/\w+,,
-	qr,${prefix}t\.co/\w+,,
-	qr,${prefix}gaa\.st/\w+,,
-	qr,${prefix}wth\.se/\w+,,
-	qr,${prefix}korta\.nu/\w+,,
-);
+Irssi::signal_add("message public", \&handler);
+Irssi::signal_add("message private", \&handler);
+
+sub wprint {
+	my $server = shift;
+	my $target = shift;
+	my $msg = join '', @_;
+
+	my $win = $server->window_item_find($target);
+	$win->print($msg, MSGLEVEL_CLIENTCRAP);
+}
+
+sub resolution {
+	my $server = shift;
+	my $target = shift;
+	my $tiny = shift;
+	my $dest = shift;
+
+	wprint($server, $target, "%y$tiny -> $dest");
+}
+
+
+sub add_domain {
+	my $domain = shift;
+	my $suffix = shift // qr{/\w+};
+	my $prefix = shift // qr{(?:http://(?:www\.)?|www\.)};
+
+	push @tinyfiers, qr/$prefix \Q$domain\E $suffix/x;
+}
+
 
 sub hastiny {
 	my($msg) = @_;
@@ -62,12 +92,12 @@ sub hastiny {
 		}
 	}
 
-	return undef;
+	return;
 }
 
-sub resolve {
+sub handler {
 	my($server, $msg, $nick, $address, $target) = @_;
-	$target=$nick if $target eq undef;
+	$target = $nick unless defined $target;
 
 	while(my $url = hastiny($msg)) {
 		my $loc = get_location($url);
@@ -76,15 +106,9 @@ sub resolve {
 		$loc =~ s/%/%%/g;
 		
 		if($loc) {
-			$server->window_item_find($target)->print(
-				"%y$url%n -> $loc", 
-				MSGLEVEL_CLIENTCRAP
-			);
+			resolution($server, $target, $url, $loc);
 		} elsif($debug) {
-			$server->window_item_find($target)->print(
-				"%y$url:%n invalid link", 
-				MSGLEVEL_CLIENTCRAP
-			);
+			wprint($server, $target, "%y$url:%n invalid link");
 		}
 
 		$msg =~ s/$url//;
@@ -92,7 +116,6 @@ sub resolve {
 }
 
 sub get_location {
-	my $location;
 	my ($url) = @_;
 	
 	my $ua = LWP::UserAgent->new(
@@ -107,7 +130,4 @@ sub get_location {
 
 	return $response->header('location'); 
 }
-
-Irssi::signal_add("message public", \&resolve);
-Irssi::signal_add("message private", \&resolve);
 
