@@ -19,6 +19,20 @@ my %IRSSI = (
 	license     => 'GNU APL',
 );
 
+my $debug = 1;
+
+my @tinyfiers;
+add_domain('tinyurl.com');
+add_domain('bit.ly');
+add_domain('cot.ag');
+add_domain('ow.ly');
+add_domain('goo.gl');
+add_domain('tiny.cc');
+add_domain('t.co');
+add_domain('gaa.st');
+add_domain('wth.se');
+add_domain('korta.nu');
+
 # 2011-05-23, 0.51:
 # * Fixed the irssi color code bug
 # 2011-05-22, 0.5:
@@ -34,7 +48,8 @@ my %IRSSI = (
 # * http://www.stdlib.se/
 # * https://github.com/olof/hacks/tree/master/irssi
 
-my $debug = 1;
+Irssi::signal_add("message public", \&handler);
+Irssi::signal_add("message private", \&handler);
 
 sub wprint {
 	my $server = shift;
@@ -45,7 +60,16 @@ sub wprint {
 	$win->print($msg, MSGLEVEL_CLIENTCRAP);
 }
 
-my @tinyfiers;
+sub resolution {
+	my $server = shift;
+	my $target = shift;
+	my $tiny = shift;
+	my $dest = shift;
+
+	wprint($server, $target, "%y$tiny -> $dest");
+}
+
+
 sub add_domain {
 	my $domain = shift;
 	my $suffix = shift // qr{/\w+};
@@ -54,16 +78,6 @@ sub add_domain {
 	push @tinyfiers, qr/$prefix \Q$domain\E $suffix/x;
 }
 
-add_domain('tinyurl.com');
-add_domain('bit.ly');
-add_domain('cot.ag');
-add_domain('ow.ly');
-add_domain('goo.gl');
-add_domain('tiny.cc');
-add_domain('t.co');
-add_domain('gaa.st');
-add_domain('wth.se');
-add_domain('korta.nu');
 
 sub hastiny {
 	my($msg) = @_;
@@ -79,15 +93,6 @@ sub hastiny {
 	}
 
 	return;
-}
-
-sub resolution {
-	my $server = shift;
-	my $target = shift;
-	my $tiny = shift;
-	my $dest = shift;
-
-	wprint($server, $target, "%y$tiny -> $dest");
 }
 
 sub handler {
@@ -125,7 +130,4 @@ sub get_location {
 
 	return $response->header('location'); 
 }
-
-Irssi::signal_add("message public", \&handler);
-Irssi::signal_add("message private", \&handler);
 
