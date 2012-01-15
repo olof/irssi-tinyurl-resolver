@@ -20,7 +20,7 @@ use LWP::UserAgent;
 use Regexp::Common qw/URI/;
 use Irssi;
 
-my $VERSION = '0.51';
+my $VERSION = '0.6';
 my %IRSSI = (
 	authors     => "Olof 'zibri' Johansson",
 	contact     => 'olof@ethup.se',
