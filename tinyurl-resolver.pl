@@ -6,6 +6,15 @@
 # provided the copyright notice are preserved. This file is 
 # offered as-is, without any warranty.
 
+# This started of as a modified version of youtube-title.pl 
+#
+# See also:
+# * http://www.stdlib.se/
+# * https://github.com/olof/irssi-tinyurl-resolver
+
+# TODO:
+# * Unit testing
+
 use strict;
 use LWP::UserAgent;
 use Regexp::Common qw/URI/;
@@ -34,11 +43,6 @@ add_domain('t.co');
 add_domain('gaa.st');
 add_domain('wth.se');
 add_domain('korta.nu');
-
-# This started of as a modified version of youtube-title.pl 
-# See also:
-# * http://www.stdlib.se/
-# * https://github.com/olof/hacks/tree/master/irssi
 
 Irssi::signal_add("message public", \&handler);
 Irssi::signal_add("message private", \&handler);
