@@ -74,7 +74,7 @@ sub hastiny {
 
 sub handler {
 	my($server, $msg, $nick, $address, $target) = @_;
-	$target=$nick if $target eq undef;
+	$target = $nick unless defined $target;
 
 	while(my $url = hastiny($msg)) {
 		my $loc = get_location($url);
