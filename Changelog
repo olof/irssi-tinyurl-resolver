@@ -1,3 +1,6 @@
+2012-01-16, 0.61:
+* Ability to only print last step in chain (that's the default).
+  - This can be controlled with irssi setting tiny_print_chain
 2012-01-15, 0.6:
 * Iteratively print out each step in a tiny url chain
   - Introduces a depenceny on perl module Regexp::Common::URI
