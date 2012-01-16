@@ -57,17 +57,28 @@ sub wprint {
 	$win->print($msg, MSGLEVEL_CLIENTCRAP);
 }
 
+sub color {
+	my $msg = shift;
+	my $color = shift // $color;
+	return "$color$msg%n";
+}
+
 sub resolution {
 	my $server = shift;
 	my $target = shift;
 	my $tiny = shift;
 	my @chain = @_;
 
-	for (@chain) { s/%/%%/g };
-	my $msg = "$color$tiny%n";
-	$msg .= " -> $color$_%n" for (@chain);
+	s/%/%%/g for (@chain);
+	my $msg = color($tiny);
+	$msg .= " -> ". color($_) for (@chain);
 
 	wprint($server, $target, $msg);
+}
+
+sub invalid {
+	my $url = pop;
+	wprint(@_, color("$url:") . " invalid link");
 }
 
 
@@ -109,7 +120,7 @@ sub handler {
 		my @chain = resolve($url);
 
 		if(@chain == 0 and $debug) {
-			wprint($server, $target, "$color$url:%n invalid link");
+			invalid($server, $target, $url);
 			next;
 		}
 
