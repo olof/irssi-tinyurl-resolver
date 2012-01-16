@@ -47,6 +47,7 @@ add_domain('korta.nu');
 Irssi::signal_add("message public", \&handler);
 Irssi::signal_add("message private", \&handler);
 Irssi::settings_add_int('tinyurl-resolver', 'tiny_resolve_limit', 5);
+Irssi::settings_add_bool('tinyurl-resolver', 'tiny_print_chain', 0);
 
 sub wprint {
 	my $server = shift;
@@ -67,7 +68,8 @@ sub resolution {
 	my $server = shift;
 	my $target = shift;
 	my $tiny = shift;
-	my @chain = @_;
+	my $outlim = Irssi::settings_get_bool('tiny_print_chain');
+	my @chain = $outlim ? @_ : ($_[$#_]);
 
 	s/%/%%/g for (@chain);
 	my $msg = color($tiny);
