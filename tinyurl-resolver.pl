@@ -41,6 +41,7 @@ add_domain('goo.gl');
 add_domain('tiny.cc');
 add_domain('t.co');
 add_domain('cdm.fm');
+add_domain('is.gd');
 add_domain('gaa.st');
 add_domain('wth.se');
 add_domain('korta.nu');
