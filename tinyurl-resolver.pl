@@ -40,6 +40,7 @@ add_domain('ow.ly');
 add_domain('goo.gl');
 add_domain('tiny.cc');
 add_domain('t.co');
+add_domain('j.mp');
 add_domain('cdm.fm');
 add_domain('is.gd');
 add_domain('fb.me');
