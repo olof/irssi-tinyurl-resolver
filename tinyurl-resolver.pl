@@ -38,6 +38,7 @@ add_domain('bit.ly');
 add_domain('cot.ag');
 add_domain('ow.ly');
 add_domain('goo.gl');
+add_domain('goo.gl/fb');
 add_domain('tiny.cc');
 add_domain('t.co');
 add_domain('j.mp');
