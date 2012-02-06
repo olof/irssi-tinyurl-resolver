@@ -45,6 +45,7 @@ add_domain('j.mp');
 add_domain('cdm.fm');
 add_domain('is.gd');
 add_domain('fb.me');
+add_domain('git.io');
 add_domain('tgr.ph');
 add_domain('gaa.st');
 add_domain('wth.se');
