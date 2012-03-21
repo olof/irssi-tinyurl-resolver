@@ -92,7 +92,7 @@ sub invalid {
 sub add_domain {
 	my $domain = shift;
 	my $suffix = shift // qr{/\w+};
-	my $prefix = shift // qr{(?:http://(?:www\.)?|www\.)};
+	my $prefix = shift // qr{(?:https?://(?:www\.)?|www\.)};
 
 	push @tinyfiers, qr/$prefix \Q$domain\E $suffix/x;
 }
