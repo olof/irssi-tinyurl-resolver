@@ -1,3 +1,18 @@
+2012-03-21, 0.63:
+* Support services using HTTPS
+  - Changes default scheme to allow HTTPS. For services not
+    supporting HTTPS, this should be overrided. Open a bug
+    on github if you find this.
+* Adds new services:
+  - git.io
+  - goo.gl/fb
+2012-01-30, 0.62:
+* Adds new services:
+  - j.mp
+  - cdm.fm
+  - is.gd
+  - fb.me
+  - tgr.ph
 2012-01-16, 0.61:
 * Ability to only print last step in chain (that's the default).
   - This can be controlled with irssi setting tiny_print_chain

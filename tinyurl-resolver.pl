@@ -20,7 +20,7 @@ use LWP::UserAgent;
 use Regexp::Common qw/URI/;
 use Irssi;
 
-my $VERSION = '0.61';
+my $VERSION = '0.63';
 my %IRSSI = (
 	authors     => "Olof 'zibri' Johansson",
 	contact     => 'olof@ethup.se',
@@ -94,7 +94,7 @@ sub invalid {
 sub add_domain {
 	my $domain = shift;
 	my $suffix = shift // qr{/\w+};
-	my $prefix = shift // qr{(?:http://(?:www\.)?|www\.)};
+	my $prefix = shift // qr{(?:https?://(?:www\.)?|www\.)};
 
 	push @tinyfiers, qr/$prefix \Q$domain\E $suffix/x;
 }
