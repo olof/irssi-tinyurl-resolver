@@ -1,3 +1,11 @@
+2012-03-21, 0.63:
+* Support services using HTTPS
+  - Changes default scheme to allow HTTPS. For services not
+    supporting HTTPS, this should be overrided. Open a bug
+    on github if you find this.
+* Adds new services:
+  - git.io
+  - goo.gl/fb
 2012-01-30, 0.62:
 * Adds new services:
   - j.mp
